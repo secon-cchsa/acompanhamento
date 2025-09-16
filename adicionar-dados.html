@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Contratações - 2025</title>
+    <title>Adicionar Dados</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* [O CSS permanece o mesmo da Fase 4 - todo o estilo está aqui] */
+        /* O CSS deve ser o mesmo do seu painel principal, incluindo as classes card e grid-card. */
         :root {
             --card-bg-color: rgba(255, 255, 255, 0.1); --border-color: rgba(255, 255, 255, 0.2); --text-color-primary: #f0f0f0; --text-color-secondary: #d0d0d0; --cor-sidebar: #1a202c; --cor-sidebar-texto: #e2e8f0; --cor-sidebar-hover: #2d3748; --cor-submenu-fundo: #252f41; --accent-color: #4dd0e1; --largura-sidebar-expandido: 260px; --largura-sidebar-colapsado: 80px;
         }
@@ -61,23 +61,47 @@
             justify-content: center;
             align-items: center;
             height: 70vh;
-        }
-        /* Ajuste para o novo card */
-        .grid-card {
-            width: 950px; /* Adapte a largura para o tamanho do iframe */
-            padding: 0; /* Remova o padding para o iframe preencher o card */
-            display: flex; /* Para centralizar o iframe */
-            flex-direction: column; /* Para empilhar o conteúdo verticalmente */
-            justify-content: center;
-            margin-top: 300px; /* Adicionando a margem superior de 300px */
+	 
+	    margin-top: 500px; /* Adicionando a margem superior de 300px */
+
         }
         .card {
             background: var(--card-bg-color); border-radius: 15px; padding: 25px; border: 1px solid var(--border-color); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: transform 0.3s ease, border-color 0.3s ease; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;
         }
         .card:hover { transform: translateY(-5px); border-color: var(--accent-color); }
-        .card-title { margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 400; color: var(--text-color-primary); }
-        .kpi-value { font-size: 2.2rem; font-weight: 700; color: #fff; margin: 0; line-height: 1; }
-        .kpi-label { font-size: 0.85rem; font-weight: 300; color: var(--text-color-secondary); }
+        .form-card {
+            width: 800px;
+            padding: 30px;
+        }
+        .form-card label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color-primary);
+        }
+        .form-card input, .form-card select, .form-card textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-color-primary);
+            resize: vertical; /* Permite redimensionar apenas verticalmente */
+        }
+        .form-card button {
+            background-color: var(--accent-color);
+            color: #1a202c;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        .form-card button:hover {
+            background-color: #79e3f2;
+        }
     </style>
 </head>
 <body>
@@ -94,15 +118,56 @@
         
         <ul class="sidebar-nav">
             <li><a href="404.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg><span class="link-texto">Início</span></a></li>
-	    <li><a href="adicionar-dados.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span class="link-texto">Adicionar Dados</span></a></li>
+            <li><a href="adicionar-dados.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span class="link-texto">Adicionar Dados</span></a></li>
         </ul>
     </nav>
 
     <main class="main-content">
-        <h1>Acompanhamento de Contratações - <span>CCHSA</span></h1>
+        <h1>Adicionar Dados à Planilha</h1>
         <div class="grid-container">
-            <div class="card grid-card">
-                               <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSaaEqm9LQhg3PnevhiGSk-kxiO9JXgfuxI2Q8wkyt0oJgeB10hk0aabwI2Us4OVdXFIJp_UFJNPp4J/pubhtml?gid=623588882&amp;single=true&amp;headers=false&amp;rm=minimal&amp;chrome=true" width="900px" height="600px"></iframe>
+            <div class="card form-card">
+                <form id="data-form" action="https://script.google.com/macros/s/AKfycbzdUGViyM9Rspa4y_yWsvXXUH2Nog8tqGESwbjmUf2XIaSOBGZ0Uzo3DKWp16dMPkL0/exec" method="POST">
+                    <label for="ano">Ano:</label>
+                    <input type="number" id="ano" name="ano">
+
+                    <label for="ciclo">Ciclo:</label>
+                    <input type="text" id="ciclo" name="ciclo">
+
+                    <label for="titulo">Título:</label>
+                    <input type="text" id="titulo" name="titulo">
+
+                    <label for="modalidade">Modalidade:</label>
+                    <input type="text" id="modalidade" name="modalidade">
+
+                    <label for="dataInicio">Data de início da contratação:</label>
+                    <input type="date" id="dataInicio" name="dataInicio">
+
+                    <label for="dataFim">Data final de contratação:</label>
+                    <input type="date" id="dataFim" name="dataFim">
+
+                    <label for="status">Status do processo:</label>
+                    <input type="text" id="status" name="status">
+
+                    <label for="numProcesso">Num. do processo:</label>
+                    <input type="text" id="numProcesso" name="numProcesso">
+
+                    <label for="categoria">Categoria:</label>
+                    <input type="text" id="categoria" name="categoria">
+
+                    <label for="uasg">UASG:</label>
+                    <input type="text" id="uasg" name="uasg">
+
+                    <label for="setor">Setor demandante:</label>
+                    <input type="text" id="setor" name="setor">
+
+                    <label for="comissao">Comissão de licitação:</label>
+                    <input type="text" id="comissao" name="comissao">
+
+                    <label for="observacao">Observação:</label>
+                    <textarea id="observacao" name="observacao" rows="4"></textarea>
+
+                    <button type="submit">Enviar Dados</button>
+                </form>
             </div>
         </div>
     </main>
@@ -110,16 +175,6 @@
     <script>
         const menuToggleButton = document.getElementById('menu-toggle');
         menuToggleButton.addEventListener('click', () => { document.body.classList.toggle('sidebar-collapsed'); });
-        const submenuTriggers = document.querySelectorAll('.has-submenu > a');
-        submenuTriggers.forEach(trigger => {
-            trigger.addEventListener('click', (event) => {
-                event.preventDefault();
-                const parentLi = trigger.parentElement;
-                document.querySelectorAll('.has-submenu').forEach(item => { if (item !== parentLi) { item.classList.remove('active'); } });
-                parentLi.classList.toggle('active');
-            });
-        });
     </script>
 </body>
-
 </html>
