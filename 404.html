@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Contratações - 2025</title>
+    <title>Acompanhamento de Contratações</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* [O CSS permanece o mesmo da Fase 4 - todo o estilo está aqui] */
+        /* CSS Principal (sem alterações) */
         :root {
             --card-bg-color: rgba(255, 255, 255, 0.1); --border-color: rgba(255, 255, 255, 0.2); --text-color-primary: #f0f0f0; --text-color-secondary: #d0d0d0; --cor-sidebar: #1a202c; --cor-sidebar-texto: #e2e8f0; --cor-sidebar-hover: #2d3748; --cor-submenu-fundo: #252f41; --accent-color: #4dd0e1; --largura-sidebar-expandido: 260px; --largura-sidebar-colapsado: 80px;
         }
@@ -39,45 +39,64 @@
         .sidebar-nav a { display: flex; align-items: center; padding: 15px 28px; color: var(--cor-sidebar-texto); text-decoration: none; gap: 18px; white-space: nowrap; transition: background-color 0.2s ease; }
         .sidebar-nav a:hover { background-color: var(--cor-sidebar-hover); }
         .sidebar-nav svg { width: 24px; height: 24px; flex-shrink: 0; }
-        .arrow-icon { margin-left: auto; transition: transform 0.3s ease; }
-        .submenu { list-style: none; padding: 0; margin: 0; background-color: var(--cor-submenu-fundo); max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out; }
-        .submenu a { padding-left: 74px; }
-        .has-submenu.active > .submenu { max-height: 500px; }
-        .has-submenu.active > a .arrow-icon { transform: rotate(90deg); }
         .main-content {
             margin-left: var(--largura-sidebar-expandido); padding: 30px; transition: margin-left 0.3s ease;
         }
         body.sidebar-collapsed .sidebar { width: var(--largura-sidebar-colapsado); }
         body.sidebar-collapsed .main-content { margin-left: var(--largura-sidebar-colapsado); }
-        body.sidebar-collapsed .logo-texto, body.sidebar-collapsed .link-texto, body.sidebar-collapsed .arrow-icon { opacity: 0; max-width: 0; }
+        body.sidebar-collapsed .logo-texto, body.sidebar-collapsed .link-texto { opacity: 0; max-width: 0; }
         .main-content h1 {
             font-size: 2.5rem; text-align: center; margin: 0 0 40px 0; font-weight: 300; text-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
         }
         .main-content h1 span {
             font-weight: 700; color: var(--accent-color);
         }
-        .grid-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 70vh;
-        }
-        /* Ajuste para o novo card */
-        .grid-card {
-            width: 950px; /* Adapte a largura para o tamanho do iframe */
-            padding: 0; /* Remova o padding para o iframe preencher o card */
-            display: flex; /* Para centralizar o iframe */
-            flex-direction: column; /* Para empilhar o conteúdo verticalmente */
-            justify-content: center;
-            margin-top: 300px; /* Adicionando a margem superior de 300px */
-        }
+        .grid-container { display: grid; gap: 20px; }
         .card {
-            background: var(--card-bg-color); border-radius: 15px; padding: 25px; border: 1px solid var(--border-color); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: transform 0.3s ease, border-color 0.3s ease; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;
+            background: var(--card-bg-color); border-radius: 15px; padding: 25px; border: 1px solid var(--border-color); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: all 0.4s ease; display: flex; flex-direction: column;
         }
         .card:hover { transform: translateY(-5px); border-color: var(--accent-color); }
-        .card-title { margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 400; color: var(--text-color-primary); }
-        .kpi-value { font-size: 2.2rem; font-weight: 700; color: #fff; margin: 0; line-height: 1; }
-        .kpi-label { font-size: 0.85rem; font-weight: 300; color: var(--text-color-secondary); }
+        .table-container { overflow: auto; flex-grow: 1; }
+        #data-table { width: 100%; border-collapse: collapse; color: var(--text-color-primary); white-space: nowrap; }
+        #data-table th, #data-table td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); text-align: left; }
+        #data-table th { color: var(--accent-color); font-weight: bold; }
+        #data-table tbody tr:hover { background-color: rgba(77, 208, 225, 0.2); cursor: pointer; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .card-title { margin: 0; font-size: 1.2rem; font-weight: 500; }
+        .expand-button { background: none; border: none; color: var(--text-color-secondary); cursor: pointer; padding: 5px; }
+        .expand-button:hover { color: var(--accent-color); }
+        .expand-button svg { width: 20px; height: 20px; }
+        .card.card-expanded {
+            position: fixed; top: 20px; left: calc(var(--largura-sidebar-colapsado) + 20px); right: 20px; bottom: 20px; width: auto; height: auto; z-index: 2000; padding: 30px;
+        }
+        body.sidebar-collapsed .card.card-expanded { left: calc(var(--largura-sidebar-colapsado) + 20px); }
+
+        .modal {
+            display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #1a202c; border: 1px solid var(--border-color); color: var(--text-color-primary); margin: 5% auto; padding: 30px; border-radius: 15px; width: 80%; max-width: 700px;
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
+        }
+        .modal-title {
+            margin: 0; font-size: 1.5rem; font-weight: 500; color: var(--accent-color);
+        }
+        .close-button {
+            color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer;
+        }
+        .close-button:hover, .close-button:focus {
+            color: white;
+        }
+        #edit-form label { display: block; margin-bottom: 5px; color: var(--text-color-secondary); }
+        #edit-form input, #edit-form textarea {
+            width: 100%; padding: 10px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.1); border: 1px solid var(--border-color); border-radius: 5px; color: var(--text-color-primary); box-sizing: border-box; resize: vertical;
+        }
+        #edit-form button {
+            background-color: var(--accent-color); color: #1a202c; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: background-color 0.3s ease;
+        }
+        #edit-form button:hover { background-color: #79e3f2; }
     </style>
 </head>
 <body>
@@ -94,32 +113,206 @@
         
         <ul class="sidebar-nav">
             <li><a href="404.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg><span class="link-texto">Início</span></a></li>
-	    <li><a href="adicionar-dados.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span class="link-texto">Adicionar Dados</span></a></li>
+	        <li><a href="adicionar-dados.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span class="link-texto">Adicionar Dados</span></a></li>
         </ul>
     </nav>
 
     <main class="main-content">
         <h1>Acompanhamento de Contratações - <span>CCHSA</span></h1>
         <div class="grid-container">
-            <div class="card grid-card">
-                               <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSaaEqm9LQhg3PnevhiGSk-kxiO9JXgfuxI2Q8wkyt0oJgeB10hk0aabwI2Us4OVdXFIJp_UFJNPp4J/pubhtml?gid=623588882&amp;single=true&amp;headers=false&amp;rm=minimal&amp;chrome=true" width="900px" height="600px"></iframe>
+            <div class="card" id="table-card">
+                <div class="card-header">
+                    <h2 class="card-title">Processos de Contratação</h2>
+                    <button class="expand-button" id="expand-btn" title="Expandir / Recolher">
+                         <svg id="icon-expand" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 2h-2v3h-3v2h5v-5zm-3-4V5h-3v2h3v3z"/></svg>
+                        <svg id="icon-collapse" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table id="data-table">
+                        <thead>
+                            <tr>
+                                <th>Ano</th>
+                                <th>Ciclo</th>
+                                <th>Título</th>
+                                <th>Status</th>
+                                <th>Modalidade</th>
+                                <th>Setor Demandante</th>
+                                <th>Num. Processo</th>
+                                <th>Início</th>
+                                <th>Fim</th>
+                                <th>Categoria</th>
+                                <th>UASG</th>
+                                <th>Comissão</th>
+                                <th>Observação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Contratação</h2>
+                <span class="close-button" id="closeModal">&times;</span>
+            </div>
+            <form id="edit-form">
+                <input type="hidden" id="edit-key">
+
+                <label for="edit-ano">Ano:</label>
+                <input type="number" id="edit-ano" name="ano">
+
+                <label for="edit-ciclo">Ciclo:</label>
+                <input type="text" id="edit-ciclo" name="ciclo">
+
+                <label for="edit-titulo">Título:</label>
+                <input type="text" id="edit-titulo" name="titulo">
+
+                <label for="edit-status">Status do processo:</label>
+                <input type="text" id="edit-status" name="status">
+
+                <label for="edit-modalidade">Modalidade:</label>
+                <input type="text" id="edit-modalidade" name="modalidade">
+
+                <label for="edit-setor">Setor demandante:</label>
+                <input type="text" id="edit-setor" name="setor">
+
+                <label for="edit-numProcesso">Num. do processo:</label>
+                <input type="text" id="edit-numProcesso" name="numProcesso">
+
+                <label for="edit-dataInicio">Data de início:</label>
+                <input type="date" id="edit-dataInicio" name="dataInicio">
+
+                <label for="edit-dataFim">Data final:</label>
+                <input type="date" id="edit-dataFim" name="dataFim">
+
+                <label for="edit-comissao">Comissão de licitação:</label>
+                <input type="text" id="edit-comissao" name="comissao">
+                
+                <label for="edit-observacao">Observação:</label>
+                <textarea id="edit-observacao" name="observacao" rows="3"></textarea>
+
+                <button type="submit">Salvar Alterações</button>
+            </form>
+        </div>
+    </div>
     
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <script>
+        // --- Configuração do Firebase e Sidebar ---
+        const firebaseConfig = {
+              apiKey: "AIzaSyDbKknLgGhvU3jimkCKU5DtB5EDXgh0xU0",
+    authDomain: "teste-85d7b.firebaseapp.com",
+    databaseURL: "https://teste-85d7b-default-rtdb.firebaseio.com",
+    projectId: "teste-85d7b",
+    storageBucket: "teste-85d7b.firebasestorage.app",
+    messagingSenderId: "208224618715",
+    appId: "1:208224618715:web:436e411c5092e3bac9a4fe",
+    measurementId: "G-SRYTF44G2R"
+
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const contratacoesRef = database.ref('contratacoes');
         const menuToggleButton = document.getElementById('menu-toggle');
         menuToggleButton.addEventListener('click', () => { document.body.classList.toggle('sidebar-collapsed'); });
-        const submenuTriggers = document.querySelectorAll('.has-submenu > a');
-        submenuTriggers.forEach(trigger => {
-            trigger.addEventListener('click', (event) => {
-                event.preventDefault();
-                const parentLi = trigger.parentElement;
-                document.querySelectorAll('.has-submenu').forEach(item => { if (item !== parentLi) { item.classList.remove('active'); } });
-                parentLi.classList.toggle('active');
+        
+        // --- Lógica de Exibição dos Dados ---
+        const tableBody = document.getElementById('table-body');
+        contratacoesRef.on('value', (snapshot) => {
+            tableBody.innerHTML = '';
+            const data = snapshot.val();
+            if (data) {
+                for (const key in data) {
+                    const item = data[key];
+                    const dataInicioFmt = item.dataInicio ? new Date(item.dataInicio + 'T03:00:00Z').toLocaleDateString('pt-BR') : '';
+                    const dataFimFmt = item.dataFim ? new Date(item.dataFim + 'T03:00:00Z').toLocaleDateString('pt-BR') : '';
+                    const row = `<tr data-key="${key}"><td>${item.ano||''}</td><td>${item.ciclo||''}</td><td>${item.titulo||''}</td><td>${item.status||''}</td><td>${item.modalidade||''}</td><td>${item.setor||''}</td><td>${item.numProcesso||''}</td><td>${dataInicioFmt}</td><td>${dataFimFmt}</td><td>${item.categoria||''}</td><td>${item.uasg||''}</td><td>${item.comissao||''}</td><td>${item.observacao||''}</td></tr>`;
+                    tableBody.innerHTML += row;
+                }
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="13" style="text-align:center;">Nenhum dado encontrado.</td></tr>';
+            }
+        });
+
+        // --- Lógica do Botão Expandir ---
+        const expandButton = document.getElementById('expand-btn');
+        const tableCard = document.getElementById('table-card');
+        const iconExpand = document.getElementById('icon-expand');
+        const iconCollapse = document.getElementById('icon-collapse');
+        expandButton.addEventListener('click', () => {
+            tableCard.classList.toggle('card-expanded');
+            const isExpanded = tableCard.classList.contains('card-expanded');
+            iconExpand.style.display = isExpanded ? 'none' : 'block';
+            iconCollapse.style.display = isExpanded ? 'block' : 'none';
+        });
+
+        // --- Lógica para a Janela Modal de Edição ---
+        const modal = document.getElementById('editModal');
+        const closeModalButton = document.getElementById('closeModal');
+        const editForm = document.getElementById('edit-form');
+        tableBody.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            if (!row) return;
+            const key = row.dataset.key;
+            database.ref('contratacoes/' + key).once('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    // MUDANÇA 2: Preenche os campos "Ano" e "Ciclo" ao abrir o modal
+                    document.getElementById('edit-key').value = key;
+                    document.getElementById('edit-ano').value = data.ano || '';
+                    document.getElementById('edit-ciclo').value = data.ciclo || '';
+                    document.getElementById('edit-titulo').value = data.titulo || '';
+                    document.getElementById('edit-status').value = data.status || '';
+                    document.getElementById('edit-modalidade').value = data.modalidade || '';
+                    document.getElementById('edit-setor').value = data.setor || '';
+                    document.getElementById('edit-numProcesso').value = data.numProcesso || '';
+                    document.getElementById('edit-dataInicio').value = data.dataInicio || '';
+                    document.getElementById('edit-dataFim').value = data.dataFim || '';
+                    document.getElementById('edit-comissao').value = data.comissao || '';
+                    document.getElementById('edit-observacao').value = data.observacao || '';
+                    modal.style.display = 'block';
+                }
             });
+        });
+
+        closeModalButton.addEventListener('click', () => { modal.style.display = 'none'; });
+        window.addEventListener('click', (e) => { if (e.target == modal) { modal.style.display = 'none'; } });
+
+        editForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const key = document.getElementById('edit-key').value;
+            // MUDANÇA 3: Adiciona os campos "Ano" e "Ciclo" ao salvar as alterações
+            const updatedData = {
+                ano: document.getElementById('edit-ano').value,
+                ciclo: document.getElementById('edit-ciclo').value,
+                titulo: document.getElementById('edit-titulo').value,
+                status: document.getElementById('edit-status').value,
+                modalidade: document.getElementById('edit-modalidade').value,
+                setor: document.getElementById('edit-setor').value,
+                numProcesso: document.getElementById('edit-numProcesso').value,
+                dataInicio: document.getElementById('edit-dataInicio').value,
+                dataFim: document.getElementById('edit-dataFim').value,
+                comissao: document.getElementById('edit-comissao').value,
+                observacao: document.getElementById('edit-observacao').value
+            };
+            database.ref('contratacoes/' + key).update(updatedData)
+                .then(() => {
+                    alert('Dados atualizados com sucesso!');
+                    modal.style.display = 'none';
+                })
+                .catch((error) => {
+                    console.error('Erro ao atualizar dados: ', error);
+                    alert('Ocorreu um erro ao salvar as alterações.');
+                });
         });
     </script>
 </body>
-
 </html>
